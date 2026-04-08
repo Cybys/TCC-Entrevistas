@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pesquisa — Gestão de Marca nas Plataformas Digitais</title>
+<style>
+:root {
+  --accent: #6C63FF;
+  --accent-light: #EEEDFE;
+  --accent-mid: #AFA9EC;
+  --accent-dark: #3C3489;
+  --bg: #F7F6F2;
+  --surface: #FFFFFF;
+  --border: #E8E5DE;
+  --text: #1A1A18;
+  --muted: #7A7870;
+  --success-bg: #EAF3DE;
+  --success: #3B6D11;
+  --warn-bg: #FAEEDA;
+  --warn: #854F0B;
+  --danger-bg: #FCEBEB;
+  --danger: #A32D2D;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── LAYOUT ── */
+.shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.sidebar-logo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sidebar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-section {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  margin-top: 1.25rem;
+}
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--muted);
+  cursor: default;
+  margin-bottom: 2px;
+  transition: background 0.15s;
+}
+.sidebar-item.active {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  font-weight: 500;
+}
+.sidebar-item.done {
+  color: var(--success);
+}
+.sidebar-item .num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.sidebar-item.active .num {
+  background: var(--accent);
+  color: #fff;
+}
+.sidebar-item.done .num {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.sidebar-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border);
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+.sidebar-item.done .sidebar-dot { background: var(--success); }
+.sidebar-item.active .sidebar-dot { background: var(--accent); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ── MAIN ── */
+.main {
+  padding: 3rem 3rem 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  max-width: 680px;
+}
+
+.step-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.main-heading {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.main-sub {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap { margin-bottom: 2.5rem; }
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.progress-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, #9B94FF 100%);
+  border-radius: 99px;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.25rem;
+}
+
+/* ── INTRO ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.info-tile {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.info-tile-icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: var(--accent-light);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.info-tile-icon svg { width: 16px; height: 16px; }
+.info-tile-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+.info-tile-text strong { display: block; font-weight: 600; margin-bottom: 1px; }
+
+.field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  display: block;
+  margin-bottom: 7px;
+}
+input[type=text] {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input[type=text]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.12);
+}
+
+/* ── QUESTION ── */
+.q-number {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 8px;
+}
+.q-text {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 1.75rem;
+}
+
+/* ── RECORDER ── */
+.recorder-area {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.rec-controls {
+  display: flex; align-items: center; gap: 16px;
+}
+.btn-record {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+  background: var(--accent);
+  box-shadow: 0 2px 8px rgba(108,99,255,0.35);
+}
+.btn-record:hover { transform: scale(1.06); box-shadow: 0 4px 16px rgba(108,99,255,0.4); }
+.btn-record:active { transform: scale(0.96); }
+.btn-record.recording {
+  background: #E24B4A;
+  box-shadow: 0 2px 8px rgba(226,75,74,0.35);
+  animation: pulse-ring 1.5s ease infinite;
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(226,75,74,0.45); }
+  70% { box-shadow: 0 0 0 12px rgba(226,75,74,0); }
+  100% { box-shadow: 0 0 0 0 rgba(226,75,74,0); }
+}
+.btn-record svg { width: 22px; height: 22px; fill: #fff; }
+.btn-record.recording svg.icon-mic { display: none; }
+.btn-record svg.icon-stop { display: none; }
+.btn-record.recording svg.icon-stop { display: block; }
+
+.rec-info { flex: 1; }
+.rec-status {
+  font-size: 14px; font-weight: 500; color: var(--text);
+  margin-bottom: 3px;
+}
+.rec-status.active { color: #A32D2D; }
+.rec-timer { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rec-timer.warn { color: var(--warn); font-weight: 600; }
+
+.time-bar-wrap {
+  height: 3px; background: var(--border); border-radius: 99px;
+  overflow: hidden;
+}
+.time-bar-fill {
+  height: 100%; border-radius: 99px;
+  background: var(--accent);
+  transition: width 1s linear, background 0.3s;
+  width: 0%;
+}
+.time-bar-fill.warn { background: #BA7517; }
+.time-bar-fill.danger { background: #E24B4A; }
+
+audio {
+  width: 100%; height: 38px;
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+
+/* ── STATUS BADGES ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 500;
+  padding: 4px 12px; border-radius: 99px;
+}
+.badge.ok { background: var(--success-bg); color: var(--success); }
+.badge.pending { background: var(--border); color: var(--muted); }
+.badge.uploading { background: var(--accent-light); color: var(--accent-dark); }
+.badge.error { background: var(--danger-bg); color: var(--danger); }
+.badge-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0;
+}
+
+/* ── UPLOAD STATUS ── */
+.upload-status {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.upload-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.upload-icon.ok { background: var(--success-bg); }
+.upload-icon.loading { background: var(--accent-light); }
+.upload-icon.error { background: var(--danger-bg); }
+.upload-icon svg { width: 14px; height: 14px; }
+.upload-text { flex: 1; color: var(--text); line-height: 1.4; }
+.upload-text span { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.75rem; }
+.btn {
+  padding: 11px 24px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text);
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  display: flex; align-items: center; gap: 8px;
+}
+.btn:hover { background: var(--bg); }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.btn.primary {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+  box-shadow: 0 1px 4px rgba(108,99,255,0.3);
+}
+.btn.primary:hover { background: #5a52e0; border-color: #5a52e0; }
+.btn svg { width: 16px; height: 16px; }
+
+/* ── DONE ── */
+.done-hero {
+  text-align: center; padding: 2rem 1.5rem 1.5rem;
+}
+.done-icon-wrap {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--success-bg);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+.done-icon-wrap svg { width: 32px; height: 32px; }
+.done-title { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+.done-sub { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+.summary-list { display: flex; flex-direction: column; gap: 8px; margin-top: 1.5rem; }
+.summary-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  background: var(--bg); font-size: 13px;
+}
+.summary-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--border); font-size: 11px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--muted);
+}
+.summary-num.ok { background: var(--success-bg); color: var(--success); }
+.summary-q { flex: 1; color: var(--text); line-height: 1.4; }
+.summary-q small { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+/* ── SPINNER ── */
+.spinner {
+  width: 14px; height: 14px; border: 2px solid rgba(108,99,255,0.2);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── NOTE ── */
+.note {
+  font-size: 12px; color: var(--muted); line-height: 1.7;
+  padding: 12px 16px; background: var(--bg);
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 680px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 1.5rem 1.25rem; max-width: 100%; }
+  .info-grid { grid-template-columns: 1fr; }
+  .main-heading { font-size: 21px; }
+  .q-text { font-size: 16px; }
+}
+
+/* ── CONFIG SCREEN ── */
+.config-field { margin-bottom: 1.25rem; }
+.config-field label { font-size: 13px; font-weight: 500; color: var(--text); display: block; margin-bottom: 6px; }
+.config-field input, .config-field textarea {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 14px; color: var(--text); background: var(--surface);
+  outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+}
+.config-field input:focus, .config-field textarea:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.12);
+}
+.config-hint { font-size: 12px; color: var(--muted); margin-top: 5px; line-height: 1.6; }
+.config-section-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">TCC — FGV EAESP</div>
+    <div class="sidebar-title">Gestão de Marca nas Plataformas Digitais</div>
+
+    <div class="sidebar-section">Seções</div>
+    <div id="sidebar-items"></div>
+
+    <div class="sidebar-footer">
+      Pesquisador: Victor Nicolau<br>
+      Orientadora: Prof. Ramona de Luca<br><br>
+      Suas respostas são enviadas automaticamente e usadas apenas para fins acadêmicos.
+    </div>
+  </aside>
+
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+const BLOCKS = [
+  { title: "Atuação nas plataformas", questions: [
+    "Como você utiliza as plataformas digitais no seu trabalho atualmente?",
+    "Quais plataformas são mais relevantes para você e por quê?",
+    "Como você define onde concentrar seus esforços de comunicação?"
+  ]},
+  { title: "Gestão de marca", questions: [
+    "Você enxerga sua atuação como uma construção de marca? Como isso influencia suas decisões?",
+    "Como você define o tipo de conteúdo que publica?",
+    "Existe uma estratégia clara de posicionamento ou ela foi sendo construída ao longo do tempo?"
+  ]},
+  { title: "Engajamento e audiência", questions: [
+    "Como você percebe a resposta do público ao seu conteúdo?",
+    "Você adapta sua comunicação com base nessas interações?",
+    "Que tipo de conteúdo tende a gerar maior engajamento?"
+  ]},
+  { title: "Algoritmos e visibilidade", questions: [
+    "Você acredita que os algoritmos influenciam seu alcance? De que forma?",
+    "Já utilizou estratégias específicas para aumentar a visibilidade nas plataformas?",
+    "Existe algum padrão que você identifica em conteúdos que performam melhor?"
+  ]},
+  { title: "Autopromoção e percepção", questions: [
+    "Como você equilibra conteúdos promocionais e conteúdos mais espontâneos?",
+    "Você percebe diferenças na forma como o público reage a esses conteúdos?",
+    "A autopromoção influencia a percepção da sua marca?"
+  ]}
+];
+
+const FLAT = [];
+BLOCKS.forEach((b, bi) => b.questions.forEach((q, qi) => FLAT.push({ block: b.title, blockIdx: bi, q, localIdx: qi })));
+const TOTAL = FLAT.length;
+const MAX_S = 120;
+
+// ── CONFIG — preencher após seguir o tutorial ──
+const CONFIG = {
+  CLIENT_ID: 'SEU_CLIENT_ID_AQUI.apps.googleusercontent.com',
+  FOLDER_ID: 'SEU_FOLDER_ID_AQUI'
+};
+
+let state = {
+  screen: 'intro', // intro | question | done
+  name: '',
+  step: 0,
+  recordings: new Array(TOTAL).fill(null),
+  uploadStatus: new Array(TOTAL).fill('pending'), // pending | uploading | ok | error
+  mediaRec: null,
+  chunks: [],
+  timerInt: null,
+  elapsed: 0,
+  isRecording: false,
+  accessToken: null,
+  participantFolderId: null,
+};
+
+// ── GOOGLE AUTH ──
+function loadGAPI(cb) {
+  if (window.google && window.google.accounts) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = cb;
+  document.head.appendChild(s);
+}
+
+function getToken(cb) {
+  if (state.accessToken) { cb(state.accessToken); return; }
+  loadGAPI(() => {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: CONFIG.CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      callback: (resp) => {
+        state.accessToken = resp.access_token;
+        cb(resp.access_token);
+      }
+    });
+    client.requestAccessToken();
+  });
+}
+
+async function ensureParticipantFolder(token) {
+  if (state.participantFolderId) return state.participantFolderId;
+  const folderName = `Entrevista — ${state.name} — ${new Date().toLocaleDateString('pt-BR')}`;
+  const meta = { name: folderName, mimeType: 'application/vnd.google-apps.folder', parents: [CONFIG.FOLDER_ID] };
+  const r = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(meta)
+  });
+  const data = await r.json();
+  state.participantFolderId = data.id;
+  return data.id;
+}
+
+async function uploadAudio(idx, blob, token) {
+  const folderId = await ensureParticipantFolder(token);
+  const filename = `Q${String(idx+1).padStart(2,'0')} — ${FLAT[idx].block.substring(0,30)}.webm`;
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify({ name: filename, parents: [folderId] })], { type: 'application/json' }));
+  form.append('file', blob, filename);
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: form
+  });
+  if (!r.ok) throw new Error('upload failed');
+}
+
+function triggerUpload(idx) {
+  const blob = state.recordings[idx];
+  if (!blob || state.uploadStatus[idx] === 'ok') return;
+  state.uploadStatus[idx] = 'uploading';
+  render();
+  getToken(async (token) => {
+    try {
+      await uploadAudio(idx, blob, token);
+      state.uploadStatus[idx] = 'ok';
+    } catch(e) {
+      state.uploadStatus[idx] = 'error';
+    }
+    render();
+  });
+}
+
+// ── RENDER ──
+function render() {
+  renderSidebar();
+  const main = document.getElementById('main');
+  if (state.screen === 'intro') renderIntro(main);
+  else if (state.screen === 'question') renderQuestion(main);
+  else renderDone(main);
+}
+
+function renderSidebar() {
+  const c = document.getElementById('sidebar-items');
+  let html = '';
+  BLOCKS.forEach((b, bi) => {
+    const qStart = BLOCKS.slice(0,bi).reduce((s,x)=>s+x.questions.length,0);
+    const blockDone = b.questions.every((_,qi) => state.recordings[qStart+qi]);
+    const isActive = state.screen === 'question' && FLAT[state.step].blockIdx === bi;
+    html += `<div class="sidebar-item ${isActive?'active':''} ${blockDone?'done':''}">
+      <div class="num">${bi+1}</div>
+      <span>${b.title}</span>
+    </div>`;
+  });
+  c.innerHTML = html;
+}
+
+function renderIntro(el) {
+  el.innerHTML = `
+    <div class="step-label">Bem-vindo</div>
+    <h1 class="main-heading">Olá! Obrigado por participar da pesquisa.</h1>
+    <p class="main-sub">Esta entrevista faz parte do meu TCC na FGV sobre gestão de marca de artistas nas plataformas digitais. São 15 perguntas em áudio — leva cerca de 15 a 20 minutos.</p>
+
+    <div class="info-grid">
+      <div class="info-tile">
+        <div class="info-tile-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
+        </div>
+        <div class="info-tile-text"><strong>Até 2 min por resposta</strong>Grave no seu próprio ritmo</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.89 13.7a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.8 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10a16 16 0 0 0 6.09 6.09l1.06-1.06a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="info-tile-text"><strong>5 blocos temáticos</strong>15 perguntas no total</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="info-tile-text"><strong>100% confidencial</strong>Uso exclusivamente acadêmico</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2"><path d="M7 16a4 4 0 0 1-.88-7.903A5 5 0 1 1 15.9 6L16 6a5 5 0 0 1 1 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        </div>
+        <div class="info-tile-text"><strong>Envio automático</strong>Nada para baixar ou mandar</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="field-label" for="pname">Como você se identifica? (nome artístico ou nome)</label>
+      <input type="text" id="pname" placeholder="Ex: João Silva" value="${state.name}" autocomplete="off" />
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" onclick="startInterview()">
+        Começar entrevista
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderQuestion(el) {
+  const item = FLAT[state.step];
+  const pct = Math.round((state.step / TOTAL) * 100);
+  const rec = state.recordings[state.step];
+  const us = state.uploadStatus[state.step];
+  const timeFill = Math.min(100, Math.round((state.elapsed / MAX_S) * 100));
+  const timeClass = state.elapsed >= 100 ? 'danger' : state.elapsed >= 80 ? 'warn' : '';
+  const m = Math.floor(state.elapsed / 60), s = state.elapsed % 60;
+  const timeStr = m + ':' + String(s).padStart(2,'0');
+  const timeLeft = MAX_S - state.elapsed;
+  const tlStr = Math.floor(timeLeft/60) + ':' + String(timeLeft%60).padStart(2,'0');
+
+  let uploadHTML = '';
+  if (rec) {
+    if (us === 'ok') uploadHTML = `<div class="upload-status">
+      <div class="upload-icon ok"><svg viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="upload-text">Áudio enviado com sucesso<span>Salvo no Google Drive do pesquisador</span></div>
+      <span class="badge ok"><span class="badge-dot"></span>Enviado</span>
+    </div>`;
+    else if (us === 'uploading') uploadHTML = `<div class="upload-status">
+      <div class="upload-icon loading"><div class="spinner"></div></div>
+      <div class="upload-text">Enviando áudio…<span>Aguarde</span></div>
+    </div>`;
+    else if (us === 'error') uploadHTML = `<div class="upload-status">
+      <div class="upload-icon error"><svg viewBox="0 0 24 24" fill="none" stroke="#A32D2D" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      <div class="upload-text">Erro no envio<span>O áudio foi gravado. <a href="#" onclick="retryUpload(${state.step});return false;" style="color:var(--accent)">Tentar novamente</a></span></div>
+      <span class="badge error">Erro</span>
+    </div>`;
+    else uploadHTML = `<div class="upload-status">
+      <div class="upload-icon loading"><div class="spinner"></div></div>
+      <div class="upload-text">Aguardando autorização do Google…<span></span></div>
+    </div>`;
+  }
+
+  el.innerHTML = `
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span>Pergunta ${state.step+1} de ${TOTAL}</span>
+        <span>${pct}% concluído</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+
+    <div class="step-label">${item.block}</div>
+
+    <div class="card">
+      <div class="q-number">Pergunta ${state.step+1}</div>
+      <p class="q-text">${item.q}</p>
+
+      <div class="recorder-area">
+        <div class="rec-controls">
+          <button class="btn-record ${state.isRecording?'recording':''}" id="rbtn" onclick="toggleRec()">
+            <svg class="icon-mic" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
+            <svg class="icon-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          </button>
+          <div class="rec-info">
+            <div class="rec-status ${state.isRecording?'active':''}">${state.isRecording ? 'Gravando…' : rec ? 'Gravação salva' : 'Pressione para gravar'}</div>
+            <div class="rec-timer ${timeClass}">${state.isRecording ? timeStr + ' — restam ' + tlStr : rec ? 'Áudio gravado' : 'Até 2 minutos'}</div>
+          </div>
+          ${rec && !state.isRecording ? `<span class="badge ok"><span class="badge-dot"></span>OK</span>` : ''}
+        </div>
+
+        ${state.isRecording ? `<div class="time-bar-wrap"><div class="time-bar-fill ${timeClass}" style="width:${timeFill}%"></div></div>` : ''}
+
+        ${rec && !state.isRecording ? `<audio id="aprev" controls></audio>` : ''}
+        ${uploadHTML}
+      </div>
+    </div>
+
+    <div class="btn-row">
+      ${state.step > 0 ? `<button class="btn" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Voltar</button>` : ''}
+      <button class="btn primary" id="bnext" onclick="goNext()" ${!rec || state.isRecording ? 'disabled' : ''}>
+        ${state.step === TOTAL-1 ? 'Finalizar' : 'Próxima pergunta'}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  `;
+
+  if (rec && !state.isRecording) {
+    const a = document.getElementById('aprev');
+    if (a) a.src = URL.createObjectURL(rec);
+  }
+}
+
+function renderDone(el) {
+  const allOk = state.uploadStatus.every(s => s === 'ok');
+  const anyError = state.uploadStatus.some(s => s === 'error');
+  const answered = state.recordings.filter(Boolean).length;
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="done-hero">
+        <div class="done-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="done-title">Entrevista concluída!</div>
+        <div class="done-sub">Muito obrigado, <strong>${state.name}</strong>.<br>Suas respostas foram gravadas e enviadas diretamente para o pesquisador.</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px;">Resumo do envio (${answered} de ${TOTAL} respondidas)</div>
+
+      <div class="summary-list">
+        ${FLAT.map((item, i) => {
+          const rec = state.recordings[i];
+          const us = state.uploadStatus[i];
+          return `<div class="summary-row">
+            <div class="summary-num ${us==='ok'?'ok':''}">${us==='ok'?'✓':i+1}</div>
+            <div class="summary-q">${item.q.substring(0,60)}${item.q.length>60?'…':''}
+              <small>${item.block}</small>
+            </div>
+            ${rec ? `<span class="badge ${us==='ok'?'ok':us==='error'?'error':'uploading'}">
+              ${us==='ok'?'Enviado':us==='error'?'Erro':'Enviando…'}
+            </span>` : `<span class="badge pending">Não respondida</span>`}
+            ${us==='error' ? `<button class="btn" style="padding:4px 10px;font-size:12px" onclick="retryUpload(${i})">Reenviar</button>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+
+      ${anyError ? `<p class="note" style="margin-top:1rem">Algumas perguntas tiveram erro no envio. Clique em "Reenviar" para tentar novamente.</p>` : ''}
+    </div>
+  `;
+}
+
+// ── ACTIONS ──
+function startInterview() {
+  const v = document.getElementById('pname').value.trim();
+  if (!v) { alert('Por favor, informe seu nome antes de começar.'); return; }
+  state.name = v;
+  state.screen = 'question';
+  state.step = 0;
+  render();
+}
+
+function toggleRec() {
+  if (state.isRecording) stopRec();
+  else startRec();
+}
+
+function startRec() {
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    state.chunks = [];
+    state.mediaRec = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm' });
+    state.mediaRec.ondataavailable = e => state.chunks.push(e.data);
+    state.mediaRec.onstop = () => {
+      const blob = new Blob(state.chunks, { type: 'audio/webm' });
+      state.recordings[state.step] = blob;
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(state.timerInt);
+      state.elapsed = 0;
+      state.isRecording = false;
+      render();
+      triggerUpload(state.step);
+    };
+    state.mediaRec.start(500);
+    state.elapsed = 0;
+    state.isRecording = true;
+    state.timerInt = setInterval(() => {
+      state.elapsed++;
+      if (state.elapsed >= MAX_S) { stopRec(); return; }
+      updateTimerDisplay();
+    }, 1000);
+    render();
+  }).catch(() => alert('Não foi possível acessar o microfone. Verifique as permissões do navegador.'));
+}
+
+function stopRec() {
+  if (state.mediaRec && state.mediaRec.state === 'recording') state.mediaRec.stop();
+  clearInterval(state.timerInt);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.elapsed / 60), s = state.elapsed % 60;
+  const timeStr = m + ':' + String(s).padStart(2,'0');
+  const timeLeft = MAX_S - state.elapsed;
+  const tlStr = Math.floor(timeLeft/60) + ':' + String(timeLeft%60).padStart(2,'0');
+  const pct = Math.min(100, Math.round((state.elapsed / MAX_S) * 100));
+  const cls = state.elapsed >= 100 ? 'danger' : state.elapsed >= 80 ? 'warn' : '';
+
+  const rs = document.querySelector('.rec-status');
+  const rt = document.querySelector('.rec-timer');
+  const tb = document.querySelector('.time-bar-fill');
+  if (rs) rs.textContent = 'Gravando…';
+  if (rt) { rt.textContent = timeStr + ' — restam ' + tlStr; rt.className = 'rec-timer ' + cls; }
+  if (tb) { tb.style.width = pct + '%'; tb.className = 'time-bar-fill ' + cls; }
+}
+
+function goNext() {
+  if (state.isRecording) stopRec();
+  state.step++;
+  if (state.step >= TOTAL) state.screen = 'done';
+  render();
+}
+
+function goBack() {
+  if (state.isRecording) stopRec();
+  state.step--;
+  render();
+}
+
+function retryUpload(idx) {
+  state.uploadStatus[idx] = 'pending';
+  triggerUpload(idx);
+}
+
+render();
+</script>
+</body>
+</html>
